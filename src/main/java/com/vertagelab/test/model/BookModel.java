@@ -15,4 +15,6 @@ public class BookModel {
     private int id;
 
     private String title;
+
+    private String author;
 }

@@ -1,17 +1,22 @@
 package com.vertagelab.test.exception;
 
+import com.vertagelab.test.model.ErrorResponseModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
-public class ExceptionInterceptor extends ResponseEntityExceptionHandler {
+@RestControllerAdvice
+public class ExceptionInterceptor {
 
     @ExceptionHandler(RequestException.class)
-    public final ResponseEntity<Object> handleAllExceptions(RequestException ex) {
-        RequestExceptionSchema exceptionResponse = new RequestExceptionSchema(ex.getMessage());
-        return new ResponseEntity(exceptionResponse, HttpStatus.BAD_REQUEST);
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    public ErrorResponseModel handleNoRecordFoundException(RequestException ex)
+    {
+        ErrorResponseModel errorResponse = new ErrorResponseModel();
+        errorResponse.setError("No Record Found");
+        return errorResponse;
     }
 }

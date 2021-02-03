@@ -1,6 +1,5 @@
 package com.vertagelab.test.controller;
 
-import com.vertagelab.test.exception.RequestException;
 import com.vertagelab.test.model.BookModel;
 import com.vertagelab.test.model.ErrorResponseModel;
 import com.vertagelab.test.model.SuccessResponseModel;
@@ -12,8 +11,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+import static com.vertagelab.test.statics.Statics.getErrorResponse;
+import static com.vertagelab.test.statics.Statics.getSuccessResponse;
+
 @RestController
-@RequestMapping("books")
+@RequestMapping("/api/books")
 public class BookController {
     @Autowired
     private BookRepository bookRepository;
@@ -33,7 +35,7 @@ public class BookController {
             response.setResult(opt.get());
             return new ResponseEntity<>(response, HttpStatus.OK);
         } else {
-            throw new RequestException(getErrorResponse().toString());
+            return new ResponseEntity<>(getErrorResponse(null), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -51,8 +53,7 @@ public class BookController {
             bookRepository.save(model);
             return new ResponseEntity<>(getSuccessResponse(), HttpStatus.OK);
         } else {
-            ErrorResponseModel response = getErrorResponse();
-            response.setError("book not found");
+            ErrorResponseModel response = getErrorResponse("book not found");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
     }
@@ -65,21 +66,8 @@ public class BookController {
             bookRepository.delete(bookModel);
             return new ResponseEntity<>(getSuccessResponse(), HttpStatus.OK);
         } else {
-            ErrorResponseModel response = getErrorResponse();
-            response.setError("book not found");
+            ErrorResponseModel response = getErrorResponse("book not found");
             return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
         }
-    }
-
-    private static SuccessResponseModel getSuccessResponse() {
-        SuccessResponseModel response = new SuccessResponseModel();
-        response.setSuccess(true);
-        return response;
-    }
-
-    private static ErrorResponseModel getErrorResponse() {
-        ErrorResponseModel response = new ErrorResponseModel();
-        response.setSuccess(false);
-        return response;
     }
 }
